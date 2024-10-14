@@ -3,9 +3,6 @@ package openapi
 import (
 	"errors"
 	"fmt"
-	"github.com/aep-dev/terraform-provider-openapi/openapi/openapierr"
-	"github.com/go-openapi/spec"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,9 +10,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aep-dev/terraform-provider-openapi/openapi/openapierr"
+	"github.com/go-openapi/spec"
+	"github.com/stretchr/testify/assert"
+
 	"context"
 
 	"encoding/json"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -26,7 +28,7 @@ func TestCreateSchemaResourceTimeout(t *testing.T) {
 		expectedTimeouts := &specTimeouts{
 			Get:    &duration,
 			Post:   &duration,
-			Put:    &duration,
+			Patch:  &duration,
 			Delete: &duration,
 		}
 		r := newResourceFactory(&specStubResource{
@@ -39,7 +41,7 @@ func TestCreateSchemaResourceTimeout(t *testing.T) {
 				So(timeouts.Read, ShouldEqual, expectedTimeouts.Get)
 				So(timeouts.Create, ShouldEqual, expectedTimeouts.Post)
 				So(timeouts.Delete, ShouldEqual, expectedTimeouts.Delete)
-				So(timeouts.Update, ShouldEqual, expectedTimeouts.Put)
+				So(timeouts.Update, ShouldEqual, expectedTimeouts.Patch)
 			})
 		})
 	})
@@ -508,7 +510,7 @@ func TestUpdate(t *testing.T) {
 
 		Convey("When update is called with resource data and a client and the API returns 204 (No Content) response to indicate successful completion of the request", func() {
 			client := &clientOpenAPIStub{
-				// This is the payload returned by the GET operation when checking whether any immutable property has been updated. This happens before even calling the PUT operation.
+				// This is the payload returned by the GET operation when checking whether any immutable property has been updated. This happens before even calling the PATCH operation.
 				responsePayload: map[string]interface{}{
 					idProperty.Name:        idProperty.Default,
 					stringProperty.Name:    stringProperty.Default,
@@ -525,7 +527,7 @@ func TestUpdate(t *testing.T) {
 				},
 			}
 			operations := r.openAPIResource.getResourceOperations()
-			*operations.Put = specResourceOperation{
+			*operations.Patch = specResourceOperation{
 				responses: specResponses{
 					http.StatusNoContent: &specResponse{},
 				},
@@ -543,14 +545,14 @@ func TestUpdate(t *testing.T) {
 
 		Convey("When update is configured with response 204 and it's called with resource data and a client but the API call returns an error", func() {
 			client := &clientOpenAPIStub{
-				// This is the payload returned by the GET operation when checking whether any immutable property has been updated. This happens before even calling the PUT operation.
+				// This is the payload returned by the GET operation when checking whether any immutable property has been updated. This happens before even calling the PATCH operation.
 				responsePayload: map[string]interface{}{
 					idProperty.Name:        idProperty.Default,
 					stringProperty.Name:    stringProperty.Default,
 					immutableProperty.Name: immutableProperty.Default,
 				},
 				funcPut: func() (*http.Response, error) {
-					return &http.Response{StatusCode: http.StatusNoContent}, errors.New("some error while calling PUT")
+					return &http.Response{StatusCode: http.StatusNoContent}, errors.New("some error while calling PATCH")
 				},
 				telemetryHandler: &telemetryHandlerStub{
 					submitResourceExecutionMetricsFunc: func(resourceName string, tfOperation TelemetryResourceOperation) {
@@ -560,20 +562,20 @@ func TestUpdate(t *testing.T) {
 				},
 			}
 			operations := r.openAPIResource.getResourceOperations()
-			*operations.Put = specResourceOperation{
+			*operations.Patch = specResourceOperation{
 				responses: specResponses{
 					http.StatusNoContent: &specResponse{},
 				},
 			}
 			err := r.update(resourceData, client)
 			Convey("Then the error returned should be the expected one", func() {
-				So(err.Error(), ShouldEqual, "some error while calling PUT")
+				So(err.Error(), ShouldEqual, "some error while calling PATCH")
 			})
 		})
 
 		Convey("When update is configured with response 204 and it's called with resource data and a client but the API returns an HTTP response status code that is not 204", func() {
 			client := &clientOpenAPIStub{
-				// This is the payload returned by the GET operation when checking whether any immutable property has been updated. This happens before even calling the PUT operation.
+				// This is the payload returned by the GET operation when checking whether any immutable property has been updated. This happens before even calling the PATCH operation.
 				responsePayload: map[string]interface{}{
 					idProperty.Name:        idProperty.Default,
 					stringProperty.Name:    stringProperty.Default,
@@ -590,7 +592,7 @@ func TestUpdate(t *testing.T) {
 				},
 			}
 			operations := r.openAPIResource.getResourceOperations()
-			*operations.Put = specResourceOperation{
+			*operations.Patch = specResourceOperation{
 				responses: specResponses{
 					http.StatusNoContent: &specResponse{},
 				},
@@ -654,7 +656,7 @@ func TestUpdate(t *testing.T) {
 			})
 		})
 		Convey("When update is called with resource data and a client returns a non expected error", func() {
-			expectedError := "some error returned by the PUT operation"
+			expectedError := "some error returned by the PATCH operation"
 			client := &clientOpenAPIStub{
 				responsePayload: map[string]interface{}{
 					idProperty.Name:     "id",
@@ -681,7 +683,7 @@ func TestUpdate(t *testing.T) {
 				So(err, ShouldNotBeNil)
 			})
 			Convey("And resourceData should be populated with the values returned by the API including the ID", func() {
-				So(err.Error(), ShouldEqual, "[resource='resourceName'] resource does not support PUT operation, check the swagger file exposed on '/v1/resource'")
+				So(err.Error(), ShouldEqual, "[resource='resourceName'] resource does not support PATCH operation, check the swagger file exposed on '/v1/resource'")
 			})
 		})
 	})
@@ -721,7 +723,7 @@ func TestUpdate(t *testing.T) {
 			}
 			err := r.update(resourceData, client)
 			Convey("Then the error returned should be the expected one", func() {
-				So(err.Error(), ShouldEqual, "polling mechanism failed after PUT /v1/resource call with response status code (202): error waiting for resource to reach a completion status ([]) [valid pending statuses ([])]: error occurred while retrieving status identifier value from payload for resource 'resourceName' (): could not find any status property. Please make sure the resource schema definition has either one property named 'status' or one property is marked with IsStatusIdentifier set to true")
+				So(err.Error(), ShouldEqual, "polling mechanism failed after PATCH /v1/resource call with response status code (202): error waiting for resource to reach a completion status ([]) [valid pending statuses ([])]: error occurred while retrieving status identifier value from payload for resource 'resourceName' (): could not find any status property. Please make sure the resource schema definition has either one property named 'status' or one property is marked with IsStatusIdentifier set to true")
 			})
 		})
 	})

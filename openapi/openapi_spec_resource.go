@@ -21,6 +21,6 @@ type SpecResource interface {
 type specTimeouts struct {
 	Post   *time.Duration
 	Get    *time.Duration
-	Put    *time.Duration
+	Patch  *time.Duration
 	Delete *time.Duration
 }

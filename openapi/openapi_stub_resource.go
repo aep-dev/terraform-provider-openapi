@@ -67,7 +67,7 @@ func (s *specStubResource) getResourceOperations() specResourceOperations {
 		List:   s.resourceListOperation,
 		Post:   s.resourcePostOperation,
 		Get:    s.resourceGetOperation,
-		Put:    s.resourcePutOperation,
+		Patch:  s.resourcePutOperation,
 		Delete: s.resourceDeleteOperation,
 	}
 }

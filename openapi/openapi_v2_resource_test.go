@@ -3,11 +3,12 @@ package openapi
 import (
 	"errors"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/go-openapi/jsonreference"
 	"github.com/go-openapi/spec"
@@ -3717,7 +3718,7 @@ func TestGetTimeouts(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(*timeouts.Post, ShouldEqual, time.Duration(30*time.Second))
 				So(*timeouts.Get, ShouldEqual, time.Duration(30*time.Second))
-				So(*timeouts.Put, ShouldEqual, time.Duration(30*time.Second))
+				So(*timeouts.Patch, ShouldEqual, time.Duration(30*time.Second))
 				So(*timeouts.Delete, ShouldEqual, time.Duration(30*time.Second))
 			})
 		})
