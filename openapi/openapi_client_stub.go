@@ -33,7 +33,7 @@ func (c *clientOpenAPIStub) Post(resource SpecResource, requestPayload interface
 	return c.generateStubResponse(http.StatusCreated), nil
 }
 
-func (c *clientOpenAPIStub) Put(resource SpecResource, id string, requestPayload interface{}, responsePayload interface{}, parentIDs ...string) (*http.Response, error) {
+func (c *clientOpenAPIStub) Patch(resource SpecResource, id string, requestPayload interface{}, responsePayload interface{}, parentIDs ...string) (*http.Response, error) {
 	if c.funcPut != nil {
 		return c.funcPut()
 	}
