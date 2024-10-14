@@ -15,7 +15,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
-	"github.com/dikhan/terraform-provider-openapi/v3/openapi"
+	"github.com/aep-dev/terraform-provider-openapi/openapi"
 	"github.com/stretchr/testify/assert"
 )
 
