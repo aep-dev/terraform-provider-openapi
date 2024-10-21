@@ -2,7 +2,7 @@
 
 This terraform provider aims to minimise as much as possible the efforts needed from service providers to create and
 maintain custom terraform providers. This provider uses terraform as the engine that will orchestrate and manage the cycle
-of the resources and depends on a swagger file (hosted on a remote endpoint) to successfully configure itself dynamically at runtime.
+of the resources and depends on an OpenAPI document (hosted on a remote endpoint) to successfully configure itself dynamically at runtime.
 
 <center>
     <table cellspacing="0" cellpadding="0" style="width:100%; border: none;">
@@ -28,7 +28,7 @@ describing, producing, consuming, and visualizing RESTful Web services.
 ## Overview
 
 API terraform provider is a powerful full-fledged terraform provider that is able to configure itself at runtime based on 
-a [Swagger](https://swagger.io/) specification file containing the definitions of the APIs exposed. The dynamic nature of 
+a [OpenAPI](https://openapis.org/) specification file containing the definitions of the APIs exposed. The dynamic nature of 
 this provider is what makes it very flexible and convenient for service providers as subsequent upgrades 
 to their APIs will not require new compilations of this provider. 
 The service provider APIs are discovered on the fly and therefore the service providers can focus on their services
@@ -36,7 +36,7 @@ rather than the tooling around it.
 
 ### Pre-requirements
 
-- The service provider hosts APIs documented using [OpenApi 2.0 specification](https://swagger.io/specification/v2/) and the APIs
+- The service provider hosts APIs documented using [OpenAPI 2.0](https://spec.openapis.org/oas/v2.0.html) and the APIs
 comply with the OpenAPI Terraform Provider [How to](docs/how_to.md) guidelines. The service provider API's OpenAPI document must also 
 be available via a discovery endpoint served through HTTP/s or the file system.
 
@@ -101,8 +101,8 @@ Please follow the guidelines from:
 
 ## References
 
-- [go-swagger](https://github.com/go-swagger/go-swagger): Api terraform provider makes extensive use of this library 
-which offers a very convenient implementation to serialize and deserialize swagger specifications.
+- [go-swagger](https://github.com/go-swagger/go-swagger): API terraform provider makes extensive use of this library 
+which offers a very convenient implementation to serialize and deserialize OpenAPI documents.
 - [JsonPath](https://github.com/oliveagle/jsonpath): Json path is used in
 the plugin external configuration file to define values for provider schema
 properties that are coming from external files.
