@@ -1,4 +1,4 @@
-module github.com/aep-dev/terraform-provider-openapi
+module github.com/aep-dev/terraform-provider-openapi/v3
 
 go 1.22.0
 
