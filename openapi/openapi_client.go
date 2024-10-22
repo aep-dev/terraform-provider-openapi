@@ -17,14 +17,14 @@ type httpMethodSupported string
 const (
 	httpGet    httpMethodSupported = "GET"
 	httpPost   httpMethodSupported = "POST"
-	httpPut    httpMethodSupported = "PUT"
+	httpPatch  httpMethodSupported = "PATCH"
 	httpDelete httpMethodSupported = "DELETE"
 )
 
 // ClientOpenAPI defines the behaviour expected to be implemented for the OpenAPI Client used in the Terraform OpenAPI Provider
 type ClientOpenAPI interface {
 	Post(resource SpecResource, requestPayload interface{}, responsePayload interface{}, parentIDs ...string) (*http.Response, error)
-	Put(resource SpecResource, id string, requestPayload interface{}, responsePayload interface{}, parentIDs ...string) (*http.Response, error)
+	Patch(resource SpecResource, id string, requestPayload interface{}, responsePayload interface{}, parentIDs ...string) (*http.Response, error)
 	Get(resource SpecResource, id string, responsePayload interface{}, parentIDs ...string) (*http.Response, error)
 	Delete(resource SpecResource, id string, parentIDs ...string) (*http.Response, error)
 	List(resource SpecResource, responsePayload interface{}, parentIDs ...string) (*http.Response, error)
@@ -52,14 +52,14 @@ func (o *ProviderClient) Post(resource SpecResource, requestPayload interface{},
 	return o.performRequest(httpPost, resourceURL, operation, requestPayload, responsePayload)
 }
 
-// Put performs a PUT request to the server API based on the resource configuration and the payload passed in
-func (o *ProviderClient) Put(resource SpecResource, id string, requestPayload interface{}, responsePayload interface{}, parentIDs ...string) (*http.Response, error) {
+// Patch performs a PATCH request to the server API based on the resource configuration and the payload passed in
+func (o *ProviderClient) Patch(resource SpecResource, id string, requestPayload interface{}, responsePayload interface{}, parentIDs ...string) (*http.Response, error) {
 	resourceURL, err := o.getResourceIDURL(resource, parentIDs, id)
 	if err != nil {
 		return nil, err
 	}
-	operation := resource.getResourceOperations().Put
-	return o.performRequest(httpPut, resourceURL, operation, requestPayload, responsePayload)
+	operation := resource.getResourceOperations().Patch
+	return o.performRequest(httpPatch, resourceURL, operation, requestPayload, responsePayload)
 }
 
 // Get performs a GET request to the server API based on the resource configuration and the resource instance id passed in
@@ -117,7 +117,7 @@ func (o *ProviderClient) performRequest(method httpMethodSupported, resourceURL 
 	switch method {
 	case httpPost:
 		return o.httpClient.PostJson(reqContext.url, reqContext.headers, requestPayload, responsePayload)
-	case httpPut:
+	case httpPatch:
 		return o.httpClient.PutJson(reqContext.url, reqContext.headers, requestPayload, responsePayload)
 	case httpGet:
 		return o.httpClient.Get(reqContext.url, reqContext.headers, responsePayload)

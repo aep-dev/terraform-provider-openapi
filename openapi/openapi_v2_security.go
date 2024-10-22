@@ -5,8 +5,8 @@ import (
 	"github.com/go-openapi/spec"
 )
 
-const extTfAuthenticationSchemeBearer = "x-terraform-authentication-scheme-bearer"
-const extTfAuthenticationRefreshToken = "x-terraform-refresh-token-url" // #nosec G101
+const extTfAuthenticationSchemeBearer = "x-terraform-authentication-scheme-bearer" // #nosec G101
+const extTfAuthenticationRefreshToken = "x-terraform-refresh-token-url"            // #nosec G101
 
 type specV2Security struct {
 	SecurityDefinitions spec.SecurityDefinitions

@@ -1045,7 +1045,7 @@ func TestProviderClientPut(t *testing.T) {
 			providerConfiguration:       providerConfiguration,
 			apiAuthenticator:            apiAuthenticator,
 		}
-		Convey("When providerClient PUT method is called with a specStubResource that does not override the host, a requestPayload and an empty responsePayload", func() {
+		Convey("When providerClient PATCH method is called with a specStubResource that does not override the host, a requestPayload and an empty responsePayload", func() {
 			specStubResource := &specStubResource{
 				path: "/v1/resource",
 				resourcePutOperation: &specResourceOperation{
@@ -1061,7 +1061,7 @@ func TestProviderClientPut(t *testing.T) {
 			}
 			responsePayload := map[string]interface{}{}
 			expectedID := "1234"
-			_, err := providerClient.Put(specStubResource, expectedID, requestPayload, responsePayload)
+			_, err := providerClient.Patch(specStubResource, expectedID, requestPayload, responsePayload)
 			Convey("Then the result returned should be the expected one", func() {
 				So(err, ShouldBeNil)
 				// client should have received the right URL
@@ -1102,7 +1102,7 @@ func TestProviderClientPut(t *testing.T) {
 				},
 			},
 		}
-		Convey("When providerClient PUT  method is called with a SpecV2Resource that has a subresource path, a requestPayload, an empty responsePayload and the resource parentID", func() {
+		Convey("When providerClient PATCH  method is called with a SpecV2Resource that has a subresource path, a requestPayload, an empty responsePayload and the resource parentID", func() {
 			specv2Resource := &SpecV2Resource{
 				Path: "/v1/resource/{id}/subresource",
 				RootPathItem: spec.PathItem{
@@ -1132,7 +1132,7 @@ func TestProviderClientPut(t *testing.T) {
 			responsePayload := map[string]interface{}{}
 			expectedID := "1234"
 			parentIDs := []string{"parentID"}
-			_, err := providerClient.Put(specv2Resource, expectedID, requestPayload, responsePayload, parentIDs...)
+			_, err := providerClient.Patch(specv2Resource, expectedID, requestPayload, responsePayload, parentIDs...)
 			Convey("Then the result returned should be the expected one", func() {
 				So(err, ShouldBeNil)
 				So(httpClient.URL, ShouldEqual, "http://wwww.host.com/api/v1/resource/parentID/subresource/1234")

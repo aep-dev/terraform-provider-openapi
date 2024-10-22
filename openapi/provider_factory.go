@@ -207,9 +207,9 @@ func (p providerFactory) createTerraformProviderDataSourceMap() (map[string]*sch
 }
 
 // createTerraformProviderResourceMapAndDataSourceInstanceMap is responsible for building the following:
-// - a map containing the resources that are terraform compatible
-// - a map containing the data sources from the resources that are terraform compatible. This data sources enable data
-//  source configuration on the resource instance GET operation.
+//   - a map containing the resources that are terraform compatible
+//   - a map containing the data sources from the resources that are terraform compatible. This data sources enable data
+//     source configuration on the resource instance GET operation.
 func (p providerFactory) createTerraformProviderResourceMapAndDataSourceInstanceMap() (resourceMap, dataSourceInstanceMap map[string]*schema.Resource, err error) {
 	resourceMap = map[string]*schema.Resource{}
 	dataSourceInstanceMap = map[string]*schema.Resource{}
